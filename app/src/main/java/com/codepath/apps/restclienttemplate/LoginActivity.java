@@ -1,14 +1,15 @@
 package com.codepath.apps.restclienttemplate;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 
 import com.codepath.oauth.OAuthLoginActionBarActivity;
-import com.codepath.oauth.OAuthLoginActivity;
 
-public class LoginActivity extends OAuthLoginActionBarActivity<RestClient> {
+public class LoginActivity extends OAuthLoginActionBarActivity<TwitterClient> {
 
+	private final static String TAG = "LoginActivity";
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -29,6 +30,7 @@ public class LoginActivity extends OAuthLoginActionBarActivity<RestClient> {
 	public void onLoginSuccess() {
 		// Intent i = new Intent(this, PhotosActivity.class);
 		// startActivity(i);
+		Log.d(TAG, "Login Sucessful");
 	}
 
 	// OAuth authentication flow failed, handle the error
