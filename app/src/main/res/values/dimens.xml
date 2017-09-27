@@ -3,5 +3,10 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="icon_left_margin">50dp</dimen>
+    <dimen name="row_item_margin">8dp</dimen>
+    <dimen name="twwet_text_size">14sp</dimen>
+    <dimen name="tweet_text_paddimg">4dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
 
 </resources>
