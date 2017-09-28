@@ -8,5 +8,8 @@
     <dimen name="twwet_text_size">14sp</dimen>
     <dimen name="tweet_text_paddimg">4dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="text_left_margin">8dp</dimen>
+    <dimen name="iv_left_margin">8dp</dimen>
+    <dimen name="top_margin">8dp</dimen>
 
 </resources>

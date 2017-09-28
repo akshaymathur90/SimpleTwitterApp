@@ -1,17 +1,28 @@
 
 package com.codepath.apps.restclienttemplate.models;
 
-import com.codepath.apps.restclienttemplate.MyDatabase;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.text.format.DateUtils;
+import android.util.Log;
+
+import com.codepath.apps.restclienttemplate.database.MyDatabase;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.raizlabs.android.dbflow.annotation.Column;
+import com.raizlabs.android.dbflow.annotation.ForeignKey;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 
-@Table(database = MyDatabase.class)
-public class Tweet extends BaseModel{
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 
+@Table(database = MyDatabase.class)
+public class Tweet extends BaseModel implements Parcelable {
+
+    public static final String TAG = "Tweet";
     @SerializedName("created_at")
     @Expose
     private String createdAt;
@@ -19,7 +30,7 @@ public class Tweet extends BaseModel{
     @Column
     @SerializedName("id")
     @Expose
-    private Integer id;
+    private Long id;
     @SerializedName("id_str")
     @Expose
     private String idStr;
@@ -31,21 +42,10 @@ public class Tweet extends BaseModel{
     @Expose
     private Boolean truncated;
     @Column
+    @ForeignKey(saveForeignKeyModel = false)
     @SerializedName("user")
     @Expose
     private User user;
-    @SerializedName("geo")
-    @Expose
-    private Object geo;
-    @SerializedName("coordinates")
-    @Expose
-    private Object coordinates;
-    @SerializedName("place")
-    @Expose
-    private Object place;
-    @SerializedName("contributors")
-    @Expose
-    private Object contributors;
     @SerializedName("is_quote_status")
     @Expose
     private Boolean isQuoteStatus;
@@ -79,11 +79,11 @@ public class Tweet extends BaseModel{
         this.createdAt = createdAt;
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -117,38 +117,6 @@ public class Tweet extends BaseModel{
 
     public void setUser(User user) {
         this.user = user;
-    }
-
-    public Object getGeo() {
-        return geo;
-    }
-
-    public void setGeo(Object geo) {
-        this.geo = geo;
-    }
-
-    public Object getCoordinates() {
-        return coordinates;
-    }
-
-    public void setCoordinates(Object coordinates) {
-        this.coordinates = coordinates;
-    }
-
-    public Object getPlace() {
-        return place;
-    }
-
-    public void setPlace(Object place) {
-        this.place = place;
-    }
-
-    public Object getContributors() {
-        return contributors;
-    }
-
-    public void setContributors(Object contributors) {
-        this.contributors = contributors;
     }
 
     public Boolean getIsQuoteStatus() {
@@ -215,4 +183,92 @@ public class Tweet extends BaseModel{
         this.lang = lang;
     }
 
+    public String getRelativeTimeAgo() {
+        String twitterFormat = "EEE MMM dd HH:mm:ss ZZZZZ yyyy";
+        SimpleDateFormat sf = new SimpleDateFormat(twitterFormat, Locale.ENGLISH);
+        sf.setLenient(true);
+
+        String relativeDate = "";
+        String timeString = null;
+        String relDate[]=new String[3];
+        try {
+            long dateMillis = sf.parse(createdAt).getTime();
+            relativeDate = DateUtils.getRelativeTimeSpanString(dateMillis,
+                    System.currentTimeMillis(), DateUtils.FORMAT_ABBREV_ALL).toString();
+            relDate = relativeDate.split(" ");
+
+            if(relDate[1].equalsIgnoreCase("minutes") || relDate[1].equalsIgnoreCase("minute")){
+                timeString="m";
+            }
+            else if(relDate[1].equalsIgnoreCase("seconds")||relDate[1].equalsIgnoreCase("second") ){
+                timeString="s";
+            }
+            else if(relDate[1].equalsIgnoreCase("hours")||relDate[1].equalsIgnoreCase("hour")){
+                timeString="h";
+            }
+            else{
+                timeString="d";
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        //Log.d(TAG,"relative time--> "+relativeDate);
+        //Log.d(TAG,"modified string time--> "+relDate[0]+timeString);
+        return relDate[0]+timeString;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.createdAt);
+        dest.writeValue(this.id);
+        dest.writeString(this.idStr);
+        dest.writeString(this.text);
+        dest.writeValue(this.truncated);
+        dest.writeParcelable(this.user, flags);
+        dest.writeValue(this.isQuoteStatus);
+        dest.writeValue(this.retweetCount);
+        dest.writeValue(this.favoriteCount);
+        dest.writeValue(this.favorited);
+        dest.writeValue(this.retweeted);
+        dest.writeValue(this.possiblySensitive);
+        dest.writeValue(this.possiblySensitiveAppealable);
+        dest.writeString(this.lang);
+    }
+
+    public Tweet() {
+    }
+
+    protected Tweet(Parcel in) {
+        this.createdAt = in.readString();
+        this.id = (Long) in.readValue(Long.class.getClassLoader());
+        this.idStr = in.readString();
+        this.text = in.readString();
+        this.truncated = (Boolean) in.readValue(Boolean.class.getClassLoader());
+        this.user = in.readParcelable(User.class.getClassLoader());
+        this.isQuoteStatus = (Boolean) in.readValue(Boolean.class.getClassLoader());
+        this.retweetCount = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.favoriteCount = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.favorited = (Boolean) in.readValue(Boolean.class.getClassLoader());
+        this.retweeted = (Boolean) in.readValue(Boolean.class.getClassLoader());
+        this.possiblySensitive = (Boolean) in.readValue(Boolean.class.getClassLoader());
+        this.possiblySensitiveAppealable = (Boolean) in.readValue(Boolean.class.getClassLoader());
+        this.lang = in.readString();
+    }
+
+    public static final Parcelable.Creator<Tweet> CREATOR = new Parcelable.Creator<Tweet>() {
+        @Override
+        public Tweet createFromParcel(Parcel source) {
+            return new Tweet(source);
+        }
+
+        @Override
+        public Tweet[] newArray(int size) {
+            return new Tweet[size];
+        }
+    };
 }

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+<RelativeLayout
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/my_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:elevation="4dp"
+            android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/row_item_margin">
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentEnd="true"
+                    tools:src="@drawable/twitter_white_icon"/>
+            </RelativeLayout>
+
+        </android.support.v7.widget.Toolbar>
+=    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/row_item_margin"
+        android:layout_below="@id/my_toolbar">
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusable="true"
+            android:maxLines="6"
+            android:minLines="4"
+            android:hint="@string/himt_compose_tweet"
+            android:id="@+id/et_tweet_text"/>
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/et_tweet_text">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:text="@string/label_tweet"
+            android:background="@color/material_blue"
+            android:textColor="@android:color/white"
+            android:id="@+id/btn_send_tweet"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toStartOf="@id/btn_send_tweet"
+            tools:text="140"
+            android:padding="@dimen/tweet_text_paddimg"
+            android:layout_marginEnd="@dimen/row_item_margin"
+            android:id="@+id/tv_char_count"/>
+
+
+    </RelativeLayout>
+
+    </RelativeLayout>
+
+
+
+</RelativeLayout>
+</layout>
