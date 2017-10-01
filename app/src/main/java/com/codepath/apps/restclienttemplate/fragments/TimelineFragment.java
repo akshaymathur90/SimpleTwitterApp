@@ -1,19 +1,27 @@
 package com.codepath.apps.restclienttemplate.fragments;
 
 
+import android.app.Activity;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.codepath.apps.restclienttemplate.R;
+import com.codepath.apps.restclienttemplate.activities.LoginActivity;
 import com.codepath.apps.restclienttemplate.adapters.TimelineRecyclerViewAdapter;
 import com.codepath.apps.restclienttemplate.network.TwitterApplication;
 import com.codepath.apps.restclienttemplate.network.TwitterClient;
@@ -77,6 +85,12 @@ public class TimelineFragment extends Fragment implements ComposeTweetFragment.P
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         mFragmentTimelineBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_timeline, container, false);
+        ((AppCompatActivity) getActivity()).setSupportActionBar(mFragmentTimelineBinding.toolbar);
+        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        if(actionBar!=null){
+            actionBar.setTitle(R.string.app_name);
+            actionBar.setLogo(R.drawable.ic_twitter_logo_whiteonimage  );
+        }
         mFragmentTimelineBinding.fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -106,10 +120,14 @@ public class TimelineFragment extends Fragment implements ComposeTweetFragment.P
         mFragmentTimelineBinding.swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                Tweet tweet = mList.get(0);
-                Log.d(TAG,"Loading sinceid--> "+tweet.getId());
+                long since_id = 1;
+                if(mList.size()>0){
+                    Tweet tweet = mList.get(0);
+                    since_id = tweet.getId();
+                    Log.d(TAG,"Loading sinceid--> "+since_id);
+                }
                 endlessRecyclerViewScrollListener.resetState();
-                fetchTimelineTweets(0,tweet.getId());
+                fetchTimelineTweets(0,since_id);
             }
         });
         mFragmentTimelineBinding.swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
@@ -118,10 +136,31 @@ public class TimelineFragment extends Fragment implements ComposeTweetFragment.P
                 android.R.color.holo_red_light);
 
         fetchTimelineTweets(0,1);
+        setHasOptionsMenu(true);
         return mFragmentTimelineBinding.getRoot();
     }
 
-    private void fetchTimelineTweets(long maxId,final long sinceId) {
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.main_menu,menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.menu_logout:
+                TwitterClient twitterClient = TwitterApplication.getRestClient();
+                twitterClient.clearAccessToken();
+                Intent intent = new Intent(getActivity(), LoginActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                getActivity().finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void fetchTimelineTweets(long maxId, final long sinceId) {
         TwitterClient client = TwitterApplication.getRestClient();
         client.getHomeTimelineList(maxId,sinceId, new JsonHttpResponseHandler(){
             @Override
@@ -161,6 +200,7 @@ public class TimelineFragment extends Fragment implements ComposeTweetFragment.P
     public void onSuccess(Tweet tweet) {
         Log.d(TAG,"Received tweet in parent fragment");
         mAdapter.addPostedTweet(tweet);
-        mAdapter.notifyDataSetChanged();
+        mAdapter.notifyItemInserted(0);
+        mFragmentTimelineBinding.rvTimeline.smoothScrollToPosition(0);
     }
 }

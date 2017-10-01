@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name">Simple Twitter</string>
-    <string name="login_label">Log in</string>
+    <string name="login_label">Log in TO TWITTER</string>
     <string name="intent_scheme">oauth</string>
     <string name="intent_host">cprest</string>
     <string name="title_activity_timeline">TimelineActivity</string>
@@ -11,5 +11,6 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="himt_compose_tweet">What\'s happening?</string>
     <string name="label_tweet">Tweet</string>
+    <string name="label_logout">Logout</string>
 
 </resources>
