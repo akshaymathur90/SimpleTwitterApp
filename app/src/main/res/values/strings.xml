@@ -12,5 +12,6 @@
     <string name="himt_compose_tweet">What\'s happening?</string>
     <string name="label_tweet">Tweet</string>
     <string name="label_logout">Logout</string>
+    <string name="default_tweet_char_limit">140</string>
 
 </resources>

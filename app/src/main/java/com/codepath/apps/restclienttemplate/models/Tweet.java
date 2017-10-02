@@ -197,13 +197,13 @@ public class Tweet extends BaseModel implements Parcelable {
                     System.currentTimeMillis(), DateUtils.FORMAT_ABBREV_ALL).toString();
             relDate = relativeDate.split(" ");
             timeString = relDate[0]+relDate[1].charAt(0);
-            
+
         } catch (ParseException e) {
             e.printStackTrace();
         }
         Log.d(TAG,"relative time--> "+relativeDate);
-        Log.d(TAG,"modified string time--> "+relDate[0]+timeString);
-        return relDate[0]+timeString;
+        Log.d(TAG,"modified string time--> "+timeString);
+        return timeString;
     }
 
     @Override
