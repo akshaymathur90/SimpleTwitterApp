@@ -15,17 +15,6 @@
             android:elevation="4dp"
             android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/row_item_margin">
-                <ImageView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_alignParentEnd="true"
-                    tools:src="@drawable/twitter_white_icon"/>
-            </RelativeLayout>
-
         </android.support.v7.widget.Toolbar>
 =    <RelativeLayout
         android:layout_width="wrap_content"
