@@ -57,7 +57,10 @@ public class TimelineFragment extends Fragment implements ComposeTweetFragment.P
     private LinkedList<Tweet> mList;
     private LinearLayoutManager mLinearLayoutManager;
     private TimelineRecyclerViewAdapter mAdapter;
-
+    public final static int HOME_TIMELINE = 1;
+    public final static int MENTIONS_TIMELINE = 2;
+    public final static String FRAGMENT_TYPE_KEY = "fragment_type";
+    private int fragmentType;
     public TimelineFragment() {
         // Required empty public constructor
     }
@@ -69,15 +72,23 @@ public class TimelineFragment extends Fragment implements ComposeTweetFragment.P
      * @return A new instance of fragment TimelineFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static TimelineFragment newInstance() {
+    public static TimelineFragment newInstance(int fragmentType) {
         TimelineFragment fragment = new TimelineFragment();
-
+        Bundle b = new Bundle();
+        b.putInt(FRAGMENT_TYPE_KEY,fragmentType);
+        fragment.setArguments(b);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Bundle b = getArguments();
+        if(b!=null){
+            fragmentType = b.getInt(FRAGMENT_TYPE_KEY);
+        }
+
+
     }
 
     @Override
@@ -85,12 +96,6 @@ public class TimelineFragment extends Fragment implements ComposeTweetFragment.P
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         mFragmentTimelineBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_timeline, container, false);
-        ((AppCompatActivity) getActivity()).setSupportActionBar(mFragmentTimelineBinding.toolbar);
-        ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
-        if(actionBar!=null){
-            actionBar.setTitle(R.string.app_name);
-            actionBar.setLogo(R.drawable.ic_twitter_logo_whiteonimage  );
-        }
         mFragmentTimelineBinding.fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -113,7 +118,7 @@ public class TimelineFragment extends Fragment implements ComposeTweetFragment.P
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
                 Tweet tweet = mList.get(mList.size()-1);
                 Log.d(TAG,"Loading maxid--> "+tweet.getId());
-                fetchTimelineTweets(tweet.getId()-1,1);
+                fetchDataForFragment(fragmentType,tweet.getId()-1,1);
             }
         };
         mFragmentTimelineBinding.rvTimeline.addOnScrollListener(endlessRecyclerViewScrollListener);
@@ -127,7 +132,7 @@ public class TimelineFragment extends Fragment implements ComposeTweetFragment.P
                     Log.d(TAG,"Loading sinceid--> "+since_id);
                 }
                 endlessRecyclerViewScrollListener.resetState();
-                fetchTimelineTweets(0,since_id);
+                fetchDataForFragment(fragmentType,0,since_id);
             }
         });
         mFragmentTimelineBinding.swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_bright,
@@ -135,29 +140,61 @@ public class TimelineFragment extends Fragment implements ComposeTweetFragment.P
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
 
-        fetchTimelineTweets(0,1);
+        fetchDataForFragment(fragmentType,0,1);
         setHasOptionsMenu(true);
         return mFragmentTimelineBinding.getRoot();
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.main_menu,menu);
+    private void fetchDataForFragment(int fragmentType, long maxId, long sinceId){
+        switch (fragmentType){
+            case HOME_TIMELINE: fetchTimelineTweets(maxId,sinceId);
+                break;
+            case MENTIONS_TIMELINE: fetchMentionTimeline(maxId,sinceId);
+                break;
+        }
+    }
+    private void fetchMentionTimeline(long maxId, final long sinceId) {
+        Log.d(TAG,"Fetching mentions timeline ->" + maxId +" - "+ sinceId);
+        TwitterClient client = TwitterApplication.getRestClient();
+        client.getMentionsTimeline(maxId,sinceId, new JsonHttpResponseHandler(){
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+                parseData(statusCode,response,sinceId);
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                handleFailedResponse(statusCode,responseString,throwable);
+            }
+        });
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.menu_logout:
-                TwitterClient twitterClient = TwitterApplication.getRestClient();
-                twitterClient.clearAccessToken();
-                Intent intent = new Intent(getActivity(), LoginActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-                getActivity().finish();
-                return true;
+    private void parseData(int statusCode, JSONArray response, long sinceId){
+        List<Tweet> tweets = new ArrayList<Tweet>();
+        Gson gson = new Gson();
+        Log.d(TAG,"Status Code--> "+statusCode);
+        Log.d(TAG, "data--> "+response.toString());
+        for(int i=0;i<response.length();i++){
+            try {
+                Tweet tweet = gson.fromJson(response.get(i).toString(),Tweet.class);
+                tweets.add(tweet);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
-        return super.onOptionsItemSelected(item);
+        mFragmentTimelineBinding.swipeRefreshLayout.setRefreshing(false);
+        if(tweets.size()>0 && sinceId > 1){
+            mAdapter.addModeDatatoFront(tweets);
+        }else{
+            mAdapter.addMoreData(tweets);
+        }
+    }
+
+    private void handleFailedResponse(int statusCode,String responseString, Throwable throwable){
+        Log.d(TAG,"Request Failed");
+        Log.d(TAG,"Status Code--> "+statusCode);
+        Log.d(TAG, "Response--> "+responseString);
+        throwable.printStackTrace();
     }
 
     private void fetchTimelineTweets(long maxId, final long sinceId) {
@@ -165,33 +202,12 @@ public class TimelineFragment extends Fragment implements ComposeTweetFragment.P
         client.getHomeTimelineList(maxId,sinceId, new JsonHttpResponseHandler(){
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                List<Tweet> tweets = new ArrayList<Tweet>();
-                Gson gson = new Gson();
-                Log.d(TAG,"Status Code--> "+statusCode);
-                Log.d(TAG, "data--> "+response.toString());
-                for(int i=0;i<response.length();i++){
-                    try {
-                        Tweet tweet = gson.fromJson(response.get(i).toString(),Tweet.class);
-                        tweets.add(tweet);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-                mFragmentTimelineBinding.swipeRefreshLayout.setRefreshing(false);
-                if(tweets.size()>0 && sinceId > 1){
-                    mAdapter.addModeDatatoFront(tweets);
-                }else{
-                    mAdapter.addMoreData(tweets);
-                }
+                parseData(statusCode,response,sinceId);
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                Log.d(TAG,"Request Failed");
-                Log.d(TAG,"Status Code--> "+statusCode);
-                Log.d(TAG, "Response--> "+responseString);
-                throwable.printStackTrace();
-
+                handleFailedResponse(statusCode,responseString,throwable);
             }
         });
     }

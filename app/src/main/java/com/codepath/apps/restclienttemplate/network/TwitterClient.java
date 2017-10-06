@@ -1,6 +1,7 @@
 package com.codepath.apps.restclienttemplate.network;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.codepath.apps.restclienttemplate.R;
 import com.codepath.oauth.OAuthBaseClient;
@@ -54,7 +55,25 @@ public class TwitterClient extends OAuthBaseClient {
         if(since_id>1){
             params.put("since_id", since_id);
         }
+        Log.d("TwitterClient ","HOME--> "+params.toString());
 		client.get(apiUrl, params, handler);
+	}
+
+	public void getMentionsTimeline(long max_id, long since_id,AsyncHttpResponseHandler handler){
+
+		String apiUrl = getApiUrl("statuses/mentions_timeline.json");
+		// Can specify query string params directly or through RequestParams.
+		RequestParams params = new RequestParams();
+		params.put("count", 20);
+		if (max_id>0){
+			params.put("max_id", max_id);
+		}
+		if(since_id>1){
+			params.put("since_id", since_id);
+		}
+        Log.d("TwitterClient ","Mentions-->" +params.toString());
+		client.get(apiUrl, params, handler);
+
 	}
 
 	public void postNewTweet(String tweet, AsyncHttpResponseHandler handler){
