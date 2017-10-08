@@ -7,11 +7,15 @@
     <dimen name="row_item_margin">8dp</dimen>
     <dimen name="twwet_text_size">14sp</dimen>
     <dimen name="tweet_text_paddimg">4dp</dimen>
+    <dimen name="text_paddimg">2dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="text_left_margin">8dp</dimen>
     <dimen name="iv_left_margin">8dp</dimen>
     <dimen name="top_margin">8dp</dimen>
     <dimen name="profile_image_margin">32dp</dimen>
     <dimen name="location_tv_top">20dp</dimen>
+    <dimen name="margin_8">8dp</dimen>
+    <dimen name="margin_2">2dp</dimen>
+    <dimen name="margin_16">16dp</dimen>
 
 </resources>

@@ -15,6 +15,7 @@
         <item name="colorAccent">@color/material_blue</item>
         <item name="colorPrimary">@android:color/white</item>
         <item name="colorPrimaryDark">@color/material_dark_blue</item>
+        <item name="android:listDivider">@color/material_grey_light</item>
     </style>
 
     <style name="AppTheme.NoActionBar">

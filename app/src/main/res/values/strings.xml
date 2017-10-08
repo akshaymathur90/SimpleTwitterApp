@@ -18,5 +18,9 @@
     <string name="menu_label_profile">Profile</string>
     <string name="screenNameFormat">\@%s</string>
     <string name="label_tweets">Tweets</string>
+    <string name="tools_tweet_body">Some very long tweet which i could not wite here, but still i am trying to write someting which has around 140 characters. Did u know that some people can tweet 280 chars</string>
+    <string name="tools_timestamp">8:59 AM . 08 Oct 17</string>
+    <string name="label_retweets">Retweets</string>
+    <string name="label_likes">Likes</string>
 
 </resources>

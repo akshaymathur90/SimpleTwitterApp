@@ -22,12 +22,14 @@ import android.view.ViewGroup;
 
 import com.codepath.apps.restclienttemplate.R;
 import com.codepath.apps.restclienttemplate.activities.LoginActivity;
+import com.codepath.apps.restclienttemplate.activities.TweetDetailActivity;
 import com.codepath.apps.restclienttemplate.adapters.TimelineRecyclerViewAdapter;
 import com.codepath.apps.restclienttemplate.network.TwitterApplication;
 import com.codepath.apps.restclienttemplate.network.TwitterClient;
 import com.codepath.apps.restclienttemplate.databinding.FragmentTimelineBinding;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.apps.restclienttemplate.utils.EndlessRecyclerViewScrollListener;
+import com.codepath.apps.restclienttemplate.utils.ItemClickSupport;
 import com.google.gson.Gson;
 import com.loopj.android.http.JsonHttpResponseHandler;
 
@@ -126,6 +128,14 @@ public class TimelineFragment extends Fragment{
             }
         };
         mFragmentTimelineBinding.rvTimeline.addOnScrollListener(endlessRecyclerViewScrollListener);
+        ItemClickSupport.addTo(mFragmentTimelineBinding.rvTimeline).setOnItemClickListener(new ItemClickSupport.OnItemClickListener() {
+            @Override
+            public void onItemClicked(RecyclerView recyclerView, int position, View v) {
+                Intent intent = new Intent(getActivity(), TweetDetailActivity.class);
+                intent.putExtra(TweetDetailActivity.TWEET_KEY,mList.get(position));
+                startActivity(intent);
+            }
+        });
         mFragmentTimelineBinding.swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
