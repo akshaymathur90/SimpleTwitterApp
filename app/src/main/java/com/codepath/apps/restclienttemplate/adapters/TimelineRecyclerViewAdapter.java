@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.widget.RecyclerView;
@@ -18,7 +19,6 @@ import com.codepath.apps.restclienttemplate.activities.ProfileActivity;
 import com.codepath.apps.restclienttemplate.databinding.TweetRowItemBinding;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -86,6 +86,15 @@ public class TimelineRecyclerViewAdapter extends RecyclerView.Adapter {
             mTweetRowItemBinding.tvFavNum.setText(String.valueOf(tweet.getFavoriteCount()));
             mTweetRowItemBinding.tvRetweetNumber.setText(String.valueOf(tweet.getRetweetCount()));
             mTweetRowItemBinding.tvTimeSince.setText(String.valueOf(tweet.getRelativeTimeAgo()));
+
+            int favDrawable = tweet.getFavorited() ? R.drawable.ic_favorite_red_24dp : R.drawable.ic_favorite_border_black_24dp;
+            int favColor = tweet.getFavorited() ? R.color.material_red : R.color.material_grey;
+            mTweetRowItemBinding.ivFavIcon.setImageDrawable(ContextCompat.getDrawable(mContext,favDrawable));
+            mTweetRowItemBinding.tvFavNum.setTextColor(ContextCompat.getColor(mContext,favColor));
+            int retweetDrawable = tweet.getRetweeted() ? R.drawable.ic_repeat_green_24dp : R.drawable.ic_repeat_black_24dp;
+            int retweetColor = tweet.getFavorited() ? R.color.material_green : R.color.material_grey;
+            mTweetRowItemBinding.ivRetweetIcon.setImageDrawable(ContextCompat.getDrawable(mContext,retweetDrawable));
+            mTweetRowItemBinding.tvRetweetNumber.setTextColor(ContextCompat.getColor(mContext,retweetColor));
             String profileImageUrl = tweet.getUser().getProfileImageUrl();
             String biggerImageUrl = profileImageUrl.replace("normal","bigger");
             Glide.with(mContext).load(biggerImageUrl).asBitmap().centerCrop().into(new BitmapImageViewTarget(mTweetRowItemBinding.ivUserThumbnail) {

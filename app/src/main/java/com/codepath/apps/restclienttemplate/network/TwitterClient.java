@@ -10,6 +10,9 @@ import com.github.scribejava.core.builder.api.BaseApi;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 /*
  * 
  * This is the object responsible for communicating with a REST API. 
@@ -102,6 +105,34 @@ public class TwitterClient extends OAuthBaseClient {
         String apiUrl = getApiUrl("statuses/update.json");
         RequestParams params = new RequestParams();
         params.put("status", tweet);
+        client.post(apiUrl, params, handler);
+    }
+
+    public void postRetweet(long tweetId, AsyncHttpResponseHandler handler) throws UnsupportedEncodingException {
+		String apiUrl = getApiUrl(String.format("statuses/retweet/%s.json",tweetId));
+        Log.d("TwitterClient ","Retweet-->" +apiUrl);
+        client.post(apiUrl, handler);
+	}
+
+	/*
+    public void postUnRetweet(long tweetId, AsyncHttpResponseHandler handler) throws UnsupportedEncodingException {
+        String apiUrl = getApiUrl(String.format("statuses/unretweet/%s.json",tweetId));
+        client.post(apiUrl, handler);
+    }*/
+
+	public void postFavourite(long tweetId, AsyncHttpResponseHandler handler){
+        String apiUrl = getApiUrl("favorites/create.json");
+        RequestParams params = new RequestParams();
+        params.put("id", tweetId);
+        Log.d("TwitterClient ","Favourite-->" +apiUrl);
+        client.post(apiUrl, params, handler);
+    }
+
+    public void postUnFavourite(long tweetId, AsyncHttpResponseHandler handler){
+        String apiUrl = getApiUrl("favorites/destroy.json");
+        RequestParams params = new RequestParams();
+        params.put("id", tweetId);
+        Log.d("TwitterClient ","UnFavourite-->" +apiUrl);
         client.post(apiUrl, params, handler);
     }
 
