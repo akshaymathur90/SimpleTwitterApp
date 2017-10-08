@@ -11,5 +11,7 @@
     <dimen name="text_left_margin">8dp</dimen>
     <dimen name="iv_left_margin">8dp</dimen>
     <dimen name="top_margin">8dp</dimen>
+    <dimen name="profile_image_margin">32dp</dimen>
+    <dimen name="location_tv_top">20dp</dimen>
 
 </resources>

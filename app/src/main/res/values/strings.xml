@@ -13,5 +13,10 @@
     <string name="label_tweet">Tweet</string>
     <string name="label_logout">Logout</string>
     <string name="default_tweet_char_limit">140</string>
+    <string name="label_following">Following</string>
+    <string name="label_follower">Followers</string>
+    <string name="menu_label_profile">Profile</string>
+    <string name="screenNameFormat">\@%s</string>
+    <string name="label_tweets">Tweets</string>
 
 </resources>

@@ -6,34 +6,55 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.codepath.apps.restclienttemplate.R;
 import com.codepath.apps.restclienttemplate.adapters.TwitterFragmentPagerAdapter;
 import com.codepath.apps.restclienttemplate.databinding.ActivityTimelineBinding;
+import com.codepath.apps.restclienttemplate.fragments.ComposeTweetFragment;
 import com.codepath.apps.restclienttemplate.fragments.TimelineFragment;
+import com.codepath.apps.restclienttemplate.models.Tweet;
 import com.codepath.apps.restclienttemplate.network.TwitterApplication;
 import com.codepath.apps.restclienttemplate.network.TwitterClient;
 
-public class TimelineActivity extends AppCompatActivity {
+public class TimelineActivity extends AppCompatActivity implements ComposeTweetFragment.PostTweetListener{
     FragmentManager mFragmentManager;
     private ActivityTimelineBinding mBinding;
+    public final static String TAG = "TimelineActivity";
+    private TwitterFragmentPagerAdapter mAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this,R.layout.activity_timeline);
 
         setSupportActionBar(mBinding.activityToolbar);
+
+        ActionBar actionBar = getSupportActionBar();
+        if(actionBar!=null){
+            actionBar.setTitle(R.string.app_name);
+        }
         mFragmentManager = getSupportFragmentManager();
 
-
-        mBinding.viewPager.setAdapter(new TwitterFragmentPagerAdapter(getSupportFragmentManager(),
-                this));
+        mAdapter = new TwitterFragmentPagerAdapter(getSupportFragmentManager());
+        mBinding.viewPager.setAdapter(mAdapter);
         mBinding.tabLayout.setupWithViewPager(mBinding.viewPager);
+
+        mBinding.fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ComposeTweetFragment composeTweetFragment = ComposeTweetFragment.newInstance();
+                composeTweetFragment.setPostTweetListener(TimelineActivity.this);
+                composeTweetFragment.show(getSupportFragmentManager(),ComposeTweetFragment.TAG);
+
+            }
+        });
     }
 
     @Override
@@ -54,7 +75,21 @@ public class TimelineActivity extends AppCompatActivity {
                 startActivity(intent);
                 finish();
                 return true;
+            case R.id.menu_profile:
+                Intent profileIntent = new Intent(this, ProfileActivity.class);
+                startActivity(profileIntent);
+                return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onSuccess(Tweet tweet) {
+        Log.d(TAG,"Received tweet in parent fragment");
+        TimelineFragment fragment = (TimelineFragment) mAdapter.getRegisteredFragment(0);
+        if(fragment!=null){
+            fragment.addTweetAtTop(tweet);
+            mBinding.viewPager.setCurrentItem(0,true);
+        }
     }
 }

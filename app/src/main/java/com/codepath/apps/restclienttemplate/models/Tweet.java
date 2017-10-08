@@ -190,18 +190,22 @@ public class Tweet extends BaseModel implements Parcelable {
 
         String relativeDate = "";
         String timeString = null;
-        String relDate[]=new String[3];
+        String relDate[];
         try {
             long dateMillis = sf.parse(createdAt).getTime();
             relativeDate = DateUtils.getRelativeTimeSpanString(dateMillis,
-                    System.currentTimeMillis(), DateUtils.FORMAT_ABBREV_ALL).toString();
+                    System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS).toString();
+            Log.d(TAG,"relative time--> "+relativeDate);
             relDate = relativeDate.split(" ");
-            timeString = relDate[0]+relDate[1].charAt(0);
+            if(relDate.length>1){
+                timeString = relDate[0]+relDate[1].charAt(0);
+            }
+
 
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        Log.d(TAG,"relative time--> "+relativeDate);
+
         Log.d(TAG,"modified string time--> "+timeString);
         return timeString;
     }

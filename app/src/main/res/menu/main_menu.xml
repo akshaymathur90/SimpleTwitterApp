@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:title="@string/menu_label_profile"
+        android:icon="@drawable/ic_person_black_24dp"
+        app:showAsAction="ifRoom"
+        android:id="@+id/menu_profile"/>
     <item android:icon="@drawable/ic_exit_to_app_black_24dp"
         android:title="@string/label_logout"
           app:showAsAction="ifRoom"

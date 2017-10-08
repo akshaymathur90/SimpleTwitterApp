@@ -46,7 +46,7 @@ import cz.msebera.android.httpclient.Header;
  * Use the {@link TimelineFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class TimelineFragment extends Fragment implements ComposeTweetFragment.PostTweetListener{
+public class TimelineFragment extends Fragment{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 
@@ -59,8 +59,11 @@ public class TimelineFragment extends Fragment implements ComposeTweetFragment.P
     private TimelineRecyclerViewAdapter mAdapter;
     public final static int HOME_TIMELINE = 1;
     public final static int MENTIONS_TIMELINE = 2;
+    public final static int USER_TIMELINE = 3;
     public final static String FRAGMENT_TYPE_KEY = "fragment_type";
+    public final static String SCREEN_NAME_KEY = "screen_name";
     private int fragmentType;
+    private String screenName;
     public TimelineFragment() {
         // Required empty public constructor
     }
@@ -80,12 +83,22 @@ public class TimelineFragment extends Fragment implements ComposeTweetFragment.P
         return fragment;
     }
 
+    public static TimelineFragment newInstance(int fragmentType,String screenName) {
+        TimelineFragment fragment = new TimelineFragment();
+        Bundle b = new Bundle();
+        b.putInt(FRAGMENT_TYPE_KEY,fragmentType);
+        b.putString(SCREEN_NAME_KEY,screenName);
+        fragment.setArguments(b);
+        return fragment;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle b = getArguments();
         if(b!=null){
             fragmentType = b.getInt(FRAGMENT_TYPE_KEY);
+            screenName = b.getString(SCREEN_NAME_KEY);
         }
 
 
@@ -96,15 +109,6 @@ public class TimelineFragment extends Fragment implements ComposeTweetFragment.P
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         mFragmentTimelineBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_timeline, container, false);
-        mFragmentTimelineBinding.fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ComposeTweetFragment composeTweetFragment = ComposeTweetFragment.newInstance();
-                composeTweetFragment.setTargetFragment(TimelineFragment.this,REQUEST_TWEET);
-                composeTweetFragment.show(getFragmentManager(),ComposeTweetFragment.TAG);
-
-            }
-        });
         mList = new LinkedList<>();
         mLinearLayoutManager = new LinearLayoutManager(getActivity(),LinearLayoutManager.VERTICAL,false);
         mAdapter = new TimelineRecyclerViewAdapter(getActivity(),mList);
@@ -151,8 +155,26 @@ public class TimelineFragment extends Fragment implements ComposeTweetFragment.P
                 break;
             case MENTIONS_TIMELINE: fetchMentionTimeline(maxId,sinceId);
                 break;
+            case USER_TIMELINE: fetchUserTimeline(maxId,sinceId,screenName);
+                break;
         }
     }
+
+    private void fetchUserTimeline(long maxId, final long sinceId, String screenName) {
+        TwitterClient client = TwitterApplication.getRestClient();
+        client.getUserTimelineList(maxId,sinceId,screenName, new JsonHttpResponseHandler(){
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+                parseData(statusCode,response,sinceId);
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                handleFailedResponse(statusCode,responseString,throwable);
+            }
+        });
+    }
+
     private void fetchMentionTimeline(long maxId, final long sinceId) {
         Log.d(TAG,"Fetching mentions timeline ->" + maxId +" - "+ sinceId);
         TwitterClient client = TwitterApplication.getRestClient();
@@ -212,9 +234,7 @@ public class TimelineFragment extends Fragment implements ComposeTweetFragment.P
         });
     }
 
-    @Override
-    public void onSuccess(Tweet tweet) {
-        Log.d(TAG,"Received tweet in parent fragment");
+    public void addTweetAtTop(Tweet tweet){
         mAdapter.addPostedTweet(tweet);
         mAdapter.notifyItemInserted(0);
         mFragmentTimelineBinding.rvTimeline.smoothScrollToPosition(0);

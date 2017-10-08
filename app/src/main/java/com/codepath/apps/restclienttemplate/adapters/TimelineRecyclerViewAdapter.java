@@ -1,6 +1,7 @@
 package com.codepath.apps.restclienttemplate.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
@@ -13,6 +14,7 @@ import android.view.ViewGroup;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.codepath.apps.restclienttemplate.R;
+import com.codepath.apps.restclienttemplate.activities.ProfileActivity;
 import com.codepath.apps.restclienttemplate.databinding.TweetRowItemBinding;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 
@@ -76,7 +78,7 @@ public class TimelineRecyclerViewAdapter extends RecyclerView.Adapter {
             mTweetRowItemBinding = DataBindingUtil.bind(itemView);
         }
 
-        public void bind(Tweet tweet){
+        public void bind(final Tweet tweet){
             String screenName = "@"+tweet.getUser().getScreenName();
             mTweetRowItemBinding.tvScreenName.setText(screenName);
             mTweetRowItemBinding.tvTweetBody.setText(tweet.getText());
@@ -93,6 +95,14 @@ public class TimelineRecyclerViewAdapter extends RecyclerView.Adapter {
                             RoundedBitmapDrawableFactory.create(mContext.getResources(), resource);
                     circularBitmapDrawable.setCircular(true);
                     mTweetRowItemBinding.ivUserThumbnail.setImageDrawable(circularBitmapDrawable);
+                }
+            });
+            mTweetRowItemBinding.ivUserThumbnail.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(mContext, ProfileActivity.class);
+                    intent.putExtra(ProfileActivity.USER_KEY,tweet.getUser());
+                    mContext.startActivity(intent);
                 }
             });
         }

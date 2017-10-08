@@ -44,9 +44,12 @@ public class ComposeTweetFragment extends DialogFragment {
     public static final String TWEET_KEY = "tweet";
     private static final String ARG_PARAM2 = "param2";
     private FragmentComposeTweetBinding mFragmentComposeTweetBinding;
-
+    private PostTweetListener mListener;
     public interface PostTweetListener{
-        public void onSuccess(Tweet tweet);
+        void onSuccess(Tweet tweet);
+    }
+    public void setPostTweetListener(PostTweetListener listener){
+        mListener = listener;
     }
     public ComposeTweetFragment() {
         // Required empty public constructor
@@ -133,8 +136,7 @@ public class ComposeTweetFragment extends DialogFragment {
                             Log.d(TAG,"Response--> "+response.toString());
                             Gson gson = new Gson();
                             Tweet tweet = gson.fromJson(response.toString(),Tweet.class);
-                            PostTweetListener listener = (PostTweetListener) getTargetFragment();
-                            listener.onSuccess(tweet);
+                            mListener.onSuccess(tweet);
                             dismiss();
                         }
                         @Override
