@@ -40,6 +40,7 @@ public class TimelineActivity extends AppCompatActivity implements ComposeTweetF
         ActionBar actionBar = getSupportActionBar();
         if(actionBar!=null){
             actionBar.setTitle(R.string.app_name);
+            actionBar.setLogo(R.drawable.ic_twitter_logo_whiteonimage);
         }
         mFragmentManager = getSupportFragmentManager();
 

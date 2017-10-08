@@ -160,6 +160,7 @@ public class TimelineFragment extends Fragment{
     }
 
     private void fetchDataForFragment(int fragmentType, long maxId, long sinceId){
+        mFragmentTimelineBinding.swipeRefreshLayout.setRefreshing(true);
         switch (fragmentType){
             case HOME_TIMELINE: fetchTimelineTweets(maxId,sinceId);
                 break;
@@ -201,6 +202,21 @@ public class TimelineFragment extends Fragment{
         });
     }
 
+    private void fetchTimelineTweets(long maxId, final long sinceId) {
+        TwitterClient client = TwitterApplication.getRestClient();
+        client.getHomeTimelineList(maxId,sinceId, new JsonHttpResponseHandler(){
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+                parseData(statusCode,response,sinceId);
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                handleFailedResponse(statusCode,responseString,throwable);
+            }
+        });
+    }
+
     private void parseData(int statusCode, JSONArray response, long sinceId){
         List<Tweet> tweets = new ArrayList<Tweet>();
         Gson gson = new Gson();
@@ -220,6 +236,7 @@ public class TimelineFragment extends Fragment{
         }else{
             mAdapter.addMoreData(tweets);
         }
+        mFragmentTimelineBinding.swipeRefreshLayout.setRefreshing(false);
     }
 
     private void handleFailedResponse(int statusCode,String responseString, Throwable throwable){
@@ -227,21 +244,7 @@ public class TimelineFragment extends Fragment{
         Log.d(TAG,"Status Code--> "+statusCode);
         Log.d(TAG, "Response--> "+responseString);
         throwable.printStackTrace();
-    }
-
-    private void fetchTimelineTweets(long maxId, final long sinceId) {
-        TwitterClient client = TwitterApplication.getRestClient();
-        client.getHomeTimelineList(maxId,sinceId, new JsonHttpResponseHandler(){
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                parseData(statusCode,response,sinceId);
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                handleFailedResponse(statusCode,responseString,throwable);
-            }
-        });
+        mFragmentTimelineBinding.swipeRefreshLayout.setRefreshing(false);
     }
 
     public void addTweetAtTop(Tweet tweet){
