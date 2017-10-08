@@ -16,7 +16,9 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.codepath.apps.restclienttemplate.R;
 import com.codepath.apps.restclienttemplate.activities.ProfileActivity;
+import com.codepath.apps.restclienttemplate.activities.TimelineActivity;
 import com.codepath.apps.restclienttemplate.databinding.TweetRowItemBinding;
+import com.codepath.apps.restclienttemplate.fragments.ComposeTweetFragment;
 import com.codepath.apps.restclienttemplate.models.Tweet;
 
 import java.util.LinkedList;
@@ -79,8 +81,9 @@ public class TimelineRecyclerViewAdapter extends RecyclerView.Adapter {
         }
 
         public void bind(final Tweet tweet){
-            String screenName = "@"+tweet.getUser().getScreenName();
-            mTweetRowItemBinding.tvScreenName.setText(screenName);
+
+            mTweetRowItemBinding.tvScreenName.setText(String.format(mContext
+                    .getString(R.string.screenNameFormat),tweet.getUser().getScreenName()));
             mTweetRowItemBinding.tvTweetBody.setText(tweet.getText());
             mTweetRowItemBinding.tvUserName.setText(tweet.getUser().getName());
             mTweetRowItemBinding.tvFavNum.setText(String.valueOf(tweet.getFavoriteCount()));
@@ -114,6 +117,18 @@ public class TimelineRecyclerViewAdapter extends RecyclerView.Adapter {
                     mContext.startActivity(intent);
                 }
             });
+            mTweetRowItemBinding.ivReplyIcon.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    replyToTweet(tweet);
+                }
+            });
+        }
+
+        private void replyToTweet(Tweet tweet){
+            ComposeTweetFragment composeTweetFragment = ComposeTweetFragment.newInstance(tweet);
+            composeTweetFragment.setPostTweetListener((TimelineActivity) mContext);
+            composeTweetFragment.show(((TimelineActivity) mContext).getSupportFragmentManager(),ComposeTweetFragment.TAG);
         }
     }
 }

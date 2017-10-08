@@ -22,5 +22,6 @@
     <string name="tools_timestamp">8:59 AM . 08 Oct 17</string>
     <string name="label_retweets">Retweets</string>
     <string name="label_likes">Likes</string>
+    <string name="label_reply_posted">Reply Posted Successfully</string>
 
 </resources>

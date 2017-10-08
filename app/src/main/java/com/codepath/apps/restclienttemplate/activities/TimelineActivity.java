@@ -3,6 +3,7 @@ package com.codepath.apps.restclienttemplate.activities;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
@@ -84,12 +85,17 @@ public class TimelineActivity extends AppCompatActivity implements ComposeTweetF
     }
 
     @Override
-    public void onSuccess(Tweet tweet) {
-        Log.d(TAG,"Received tweet in parent fragment");
-        TimelineFragment fragment = (TimelineFragment) mAdapter.getRegisteredFragment(0);
-        if(fragment!=null){
-            fragment.addTweetAtTop(tweet);
-            mBinding.viewPager.setCurrentItem(0,true);
+    public void onSuccess(Boolean isReply, Tweet tweet) {
+        Log.d(TAG,"Received tweet in parent activity");
+        if(isReply){
+            Snackbar.make(mBinding.getRoot(),R.string.label_reply_posted,Snackbar.LENGTH_LONG).show();
+        }else{
+            TimelineFragment fragment = (TimelineFragment) mAdapter.getRegisteredFragment(0);
+            if(fragment!=null){
+                fragment.addTweetAtTop(tweet);
+                mBinding.viewPager.setCurrentItem(0,true);
+            }
         }
+
     }
 }

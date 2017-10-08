@@ -4,6 +4,7 @@ package com.codepath.apps.restclienttemplate.fragments;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -42,11 +43,12 @@ public class ComposeTweetFragment extends DialogFragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     public static final String TAG = "ComposeTweet";
     public static final String TWEET_KEY = "tweet";
-    private static final String ARG_PARAM2 = "param2";
+    private boolean mIsReply = false;
     private FragmentComposeTweetBinding mFragmentComposeTweetBinding;
     private PostTweetListener mListener;
+    private Tweet mTweet;
     public interface PostTweetListener{
-        void onSuccess(Tweet tweet);
+        void onSuccess(Boolean isReply, Tweet tweet);
     }
     public void setPostTweetListener(PostTweetListener listener){
         mListener = listener;
@@ -64,7 +66,13 @@ public class ComposeTweetFragment extends DialogFragment {
     // TODO: Rename and change types and number of parameters
     public static ComposeTweetFragment newInstance() {
         ComposeTweetFragment fragment = new ComposeTweetFragment();
-
+        return fragment;
+    }
+    public static ComposeTweetFragment newInstance(Tweet tweet) {
+        ComposeTweetFragment fragment = new ComposeTweetFragment();
+        Bundle b = new Bundle();
+        b.putParcelable(TWEET_KEY,tweet);
+        fragment.setArguments(b);
         return fragment;
     }
 
@@ -72,6 +80,14 @@ public class ComposeTweetFragment extends DialogFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setStyle(STYLE_NO_FRAME, R.style.AppTheme_NoActionBar);
+
+        Bundle bundle = getArguments();
+        if(bundle!=null){
+            Log.d(TAG,"*** IN REPLY MODE ***");
+            mIsReply = true;
+            mTweet = bundle.getParcelable(TWEET_KEY);
+        }
+
 
     }
 
@@ -99,6 +115,11 @@ public class ComposeTweetFragment extends DialogFragment {
         super.onViewCreated(view, savedInstanceState);
         mFragmentComposeTweetBinding.etTweetText.requestFocus();
         mFragmentComposeTweetBinding.tvCharCount.setText(getString(R.string.default_tweet_char_limit));
+        if(mIsReply){
+            Log.d(TAG,"Setting username in tweet body");
+            mFragmentComposeTweetBinding.etTweetText.setText(String.format(getActivity()
+                    .getString(R.string.screenNameFormat),mTweet.getUser().getScreenName()));
+        }
         getDialog().getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         mFragmentComposeTweetBinding.etTweetText.addTextChangedListener(new TextWatcher() {
@@ -128,34 +149,63 @@ public class ComposeTweetFragment extends DialogFragment {
                 String tweetText = mFragmentComposeTweetBinding.etTweetText.getText().toString();
 
                 if(tweetText.length()<=140){
-                    TwitterClient client = TwitterApplication.getRestClient();
-                    client.postNewTweet(tweetText,new JsonHttpResponseHandler(){
-                        @Override
-                        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                            Log.d(TAG,"Tweet Posted");
-                            Log.d(TAG,"Response--> "+response.toString());
-                            Gson gson = new Gson();
-                            Tweet tweet = gson.fromJson(response.toString(),Tweet.class);
-                            mListener.onSuccess(tweet);
-                            dismiss();
-                        }
-                        @Override
-                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                            Log.d(TAG,"Tweet posting FAILED");
-                            Log.d(TAG,"Status code--> "+statusCode);
-                            Log.d(TAG,"Response--> "+errorResponse.toString());
-                        }
-                    });
+                    if(mIsReply){
+                        postReply(tweetText);
+                    }else{
+                        postNewTweet(tweetText);
+                    }
                 }
             }
         });
 
     }
 
+    private void postReply(String tweetText){
+        TwitterClient client = TwitterApplication.getRestClient();
+        client.postReplyToTweet(tweetText,mTweet.getId(),new JsonHttpResponseHandler(){
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                Log.d(TAG,"Tweet Replied");
+                Log.d(TAG,"Response--> "+response.toString());
+                Gson gson = new Gson();
+                Tweet tweet = gson.fromJson(response.toString(),Tweet.class);
+                mListener.onSuccess(mIsReply,tweet);
+                dismiss();
+            }
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                Log.d(TAG,"Tweet reply FAILED");
+                Log.d(TAG,"Status code--> "+statusCode);
+                Log.d(TAG,"Response--> "+errorResponse.toString());
+            }
+        });
+    }
+
+    private void postNewTweet(String tweetText){
+        TwitterClient client = TwitterApplication.getRestClient();
+        client.postNewTweet(tweetText,new JsonHttpResponseHandler(){
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                Log.d(TAG,"Tweet Posted");
+                Log.d(TAG,"Response--> "+response.toString());
+                Gson gson = new Gson();
+                Tweet tweet = gson.fromJson(response.toString(),Tweet.class);
+                mListener.onSuccess(mIsReply,tweet);
+                dismiss();
+            }
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                Log.d(TAG,"Tweet posting FAILED");
+                Log.d(TAG,"Status code--> "+statusCode);
+                Log.d(TAG,"Response--> "+errorResponse.toString());
+            }
+        });
+    }
+
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        MenuItem menuItem = menu.findItem(R.id.menu_logout);
-        menuItem.setVisible(false);
+        menu.findItem(R.id.menu_logout).setVisible(false);
+        menu.findItem(R.id.menu_profile).setVisible(false);
     }
 
     @Override
