@@ -30,7 +30,8 @@
         android:layout_marginStart="@dimen/text_left_margin"
         android:padding="@dimen/tweet_text_paddimg"
         style="?android:attr/textAppearanceMedium"
-        android:layout_marginTop="@dimen/top_margin"/>
+        android:layout_marginTop="@dimen/top_margin"
+        android:textColor="@color/black"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -70,7 +71,8 @@
             android:id="@+id/tv_num_following"
             tools:text="100"
             android:textStyle="bold"
-            android:padding="@dimen/tweet_text_paddimg"/>
+            android:padding="@dimen/tweet_text_paddimg"
+            android:textColor="@color/black"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -85,7 +87,8 @@
             tools:text="150"
             android:textStyle="bold"
             android:padding="@dimen/tweet_text_paddimg"
-            android:layout_marginStart="@dimen/location_tv_top"/>
+            android:layout_marginStart="@dimen/location_tv_top"
+            android:textColor="@color/black"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
