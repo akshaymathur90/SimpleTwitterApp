@@ -2,12 +2,14 @@ package com.codepath.apps.restclienttemplate.activities;
 
 import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
@@ -36,6 +38,9 @@ public class ProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this,R.layout.activity_profile);
+        setSupportActionBar(mBinding.toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("");
         Bundle b = getIntent().getExtras();
         if(b==null){
             Log.d(TAG,"Logged in user timeline");
@@ -70,7 +75,7 @@ public class ProfileActivity extends AppCompatActivity {
         });
     }
 
-    private void bindData(User user){
+    private void bindData(final User user){
         mBinding.tvScreenName.setText(String.format(getString(R.string.screenNameFormat),user.getScreenName()));
         mBinding.tvUserName.setText(user.getName());
         mBinding.tvNumFollowers.setText(String.valueOf(user.getFollowersCount()));
@@ -97,9 +102,30 @@ public class ProfileActivity extends AppCompatActivity {
         mBinding.profileViewPager.setAdapter(new ProfileFragmentPagerAdapter(getSupportFragmentManager(),
                 this,user.getScreenName()));
         mBinding.profileTabLayout.setupWithViewPager(mBinding.profileViewPager);
+        mBinding.appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
+            @Override
+            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
+                if (Math.abs(verticalOffset) == appBarLayout.getTotalScrollRange()) {
+                    // Collapsed
+                    Log.d(TAG,"Collapsed");
+                    mBinding.toolbar.setTitle(user.getName());
+                }else {
+                    // Somewhere in between
+                    //Log.d(TAG,"Somewhere in between");
+                    mBinding.toolbar.setTitle("");
+                }
+            }
+        });
     }
 
 
-
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
 }

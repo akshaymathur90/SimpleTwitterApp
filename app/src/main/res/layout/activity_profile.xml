@@ -2,130 +2,182 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools">
-<RelativeLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.codepath.apps.restclienttemplate.activities.ProfileActivity">
-    <FrameLayout
+
+    <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:id="@+id/fl_images">
-        <ImageView
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
+
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/app_bar_layout"
             android:layout_width="match_parent"
-            android:layout_height="125dp"
-            android:id="@+id/iv_backdrop_image"/>
-        <ImageView
-            android:layout_width="66dp"
-            android:layout_height="66dp"
-            android:layout_gravity="bottom"
-            android:layout_marginStart="@dimen/profile_image_margin"
-            android:id="@+id/iv_profile_image"/>
-    </FrameLayout>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/fl_images"
-        tools:text="Akshay Mathur"
-        android:id="@+id/tv_user_name"
-        android:layout_marginStart="@dimen/text_left_margin"
-        android:padding="@dimen/tweet_text_paddimg"
-        style="?android:attr/textAppearanceMedium"
-        android:layout_marginTop="@dimen/top_margin"
-        android:textColor="@color/black"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/tv_user_name"
-        tools:text="\@akshayExalor"
-        android:id="@+id/tv_screen_name"
-        android:layout_marginStart="@dimen/text_left_margin"
-        android:padding="@dimen/tweet_text_paddimg"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/tv_screen_name"
-        android:id="@+id/tv_user_desc"
-        android:padding="@dimen/tweet_text_paddimg"
-        tools:text="Hi this is akshay.cinephile, bingewatcher"
-        android:layout_alignStart="@id/tv_screen_name"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/tv_user_location"
-        android:layout_below="@id/tv_user_desc"
-        tools:text="San Jose, CA"
-        android:layout_alignStart="@id/tv_user_name"
-        android:padding="@dimen/tweet_text_paddimg"
-        android:textColor="@color/material_blue"/>
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/ll_followers_following"
-        android:orientation="horizontal"
-        android:layout_below="@id/tv_user_location"
-        android:layout_alignStart="@id/tv_user_location"
-        android:layout_marginTop="@dimen/top_margin">
-        <TextView
+            android:layout_height="wrap_content"
+            android:fitsSystemWindows="true">
+
+            <android.support.design.widget.CollapsingToolbarLayout
+                android:id="@+id/collapsing_toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="410dp"
+                android:fitsSystemWindows="true"
+                app:contentScrim="?attr/colorPrimary"
+                app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
+                app:titleEnabled="false">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:layout_gravity="bottom|center_horizontal"
+                    app:layout_collapseMode="parallax">
+                    <ImageView
+                        android:id="@+id/iv_backdrop_image"
+                        android:layout_width="match_parent"
+                        android:layout_height="125dp"
+                        app:layout_collapseMode="parallax"/>
+                    <ImageView
+                        android:id="@+id/iv_profile_image"
+                        android:layout_width="66dp"
+                        android:layout_height="66dp"
+                        android:layout_below="@id/iv_backdrop_image"
+                        android:layout_marginStart="@dimen/profile_image_margin"/>
+
+                    <TextView
+                        android:id="@+id/tv_user_name"
+                        style="?android:attr/textAppearanceMedium"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/iv_profile_image"
+                        android:layout_marginStart="@dimen/text_left_margin"
+                        android:layout_marginTop="@dimen/top_margin"
+                        android:padding="@dimen/tweet_text_paddimg"
+                        android:textColor="@color/black"
+                        tools:text="Akshay Mathur"/>
+
+                    <TextView
+                        android:id="@+id/tv_screen_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/tv_user_name"
+                        android:layout_marginStart="@dimen/text_left_margin"
+                        android:padding="@dimen/tweet_text_paddimg"
+                        tools:text="\@akshayExalor"
+                        android:textColor="@color/material_grey"/>
+
+                    <TextView
+                        android:id="@+id/tv_user_desc"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignStart="@id/tv_screen_name"
+                        android:layout_below="@id/tv_screen_name"
+                        android:padding="@dimen/tweet_text_paddimg"
+                        tools:text="Hi this is akshay.cinephile, bingewatcher"
+                        android:textColor="@color/material_grey"/>
+
+                    <TextView
+                        android:id="@+id/tv_user_location"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignStart="@id/tv_user_name"
+                        android:layout_below="@id/tv_user_desc"
+                        android:padding="@dimen/tweet_text_paddimg"
+                        android:textColor="@color/material_blue"
+                        tools:text="San Jose, CA"/>
+
+                    <LinearLayout
+                        android:id="@+id/ll_followers_following"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignStart="@id/tv_user_location"
+                        android:layout_below="@id/tv_user_location"
+                        android:layout_marginTop="@dimen/top_margin"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/tv_num_following"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:padding="@dimen/tweet_text_paddimg"
+                            android:textColor="@color/black"
+                            android:textStyle="bold"
+                            tools:text="100"/>
+
+                        <TextView
+                            android:id="@+id/tv_following"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:padding="@dimen/tweet_text_paddimg"
+                            android:text="@string/label_following"
+                            android:textColor="@color/material_grey"/>
+
+                        <TextView
+                            android:id="@+id/tv_num_followers"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/location_tv_top"
+                            android:padding="@dimen/tweet_text_paddimg"
+                            android:textColor="@color/black"
+                            android:textStyle="bold"
+                            tools:text="150"/>
+
+                        <TextView
+                            android:id="@+id/tv_follower"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:padding="@dimen/tweet_text_paddimg"
+                            android:text="@string/label_follower"
+                            android:textColor="@color/material_grey"/>
+
+                    </LinearLayout>
+                </RelativeLayout>
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    app:layout_collapseMode="pin"
+                    app:theme="@style/ThemeOverlay.AppCompat.Light"
+                    android:layout_gravity="top"
+                    android:layout_marginBottom="48dp"
+                    app:title=""/>
+
+                <android.support.design.widget.TabLayout
+                    android:id="@+id/profile_tab_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_below="@id/ll_followers_following">
+
+                </android.support.design.widget.TabLayout>
+
+            </android.support.design.widget.CollapsingToolbarLayout>
+
+
+
+        </android.support.design.widget.AppBarLayout>
+
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/profile_view_pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        </android.support.v4.view.ViewPager>
+        <!--<TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/tv_num_following"
-            tools:text="100"
-            android:textStyle="bold"
-            android:padding="@dimen/tweet_text_paddimg"
-            android:textColor="@color/black"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/tv_following"
-            android:text="@string/label_following"
-            android:padding="@dimen/tweet_text_paddimg"/>
+            android:text="@string/label_tweets"
+            android:layout_below="@id/ll_followers_following"
+            android:id="@+id/tv_tweet_label"
+            android:layout_marginTop="@dimen/top_margin"
+            style="?android:attr/textAppearanceMedium"
+            android:layout_alignStart="@id/tv_screen_name"/>-->
+        <!--<FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/tv_tweet_label"
+            android:id="@+id/user_tweets_fragment_container"
+            android:layout_marginTop="@dimen/top_margin">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/tv_num_followers"
-            tools:text="150"
-            android:textStyle="bold"
-            android:padding="@dimen/tweet_text_paddimg"
-            android:layout_marginStart="@dimen/location_tv_top"
-            android:textColor="@color/black"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/tv_follower"
-            android:text="@string/label_follower"
-            android:padding="@dimen/tweet_text_paddimg"/>
+        </FrameLayout>-->
+    </android.support.design.widget.CoordinatorLayout>
 
-    </LinearLayout>
-    <android.support.design.widget.TabLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/ll_followers_following"
-        android:id="@+id/profile_tab_layout">
-
-    </android.support.design.widget.TabLayout>
-    <android.support.v4.view.ViewPager
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/profile_tab_layout"
-        android:id="@+id/profile_view_pager">
-    </android.support.v4.view.ViewPager>
-    <!--<TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/label_tweets"
-        android:layout_below="@id/ll_followers_following"
-        android:id="@+id/tv_tweet_label"
-        android:layout_marginTop="@dimen/top_margin"
-        style="?android:attr/textAppearanceMedium"
-        android:layout_alignStart="@id/tv_screen_name"/>-->
-    <!--<FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/tv_tweet_label"
-        android:id="@+id/user_tweets_fragment_container"
-        android:layout_marginTop="@dimen/top_margin">
-
-    </FrameLayout>-->
-</RelativeLayout>
 </layout>
