@@ -18,6 +18,6 @@
         android:layout_centerVertical="true"
         android:background="@color/material_blue"
         android:textColor="@android:color/white"
-        android:drawableStart="@drawable/ic_twitter_logo_whiteonimage"/>
+        android:drawableStart="@drawable/ic_twitter_logo_blueonimage"/>
 
 </RelativeLayout>
